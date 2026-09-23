@@ -16,6 +16,13 @@
       --scale: 0.78;
       --glow: 0.9;
       --ink: rgba(255, 255, 255, 0.92);
+      --skin: #8b5cf6;
+      --skin-2: #22d3ee;
+      --mark: #ffd166;
+      --press: 0;
+      --charge: 0;
+      --open: 0;
+      --heat: 0;
     }
 
     * { box-sizing: border-box; }
@@ -37,8 +44,10 @@
       overscroll-behavior: none;
       background:
         radial-gradient(ellipse at 50% 46%, var(--bg-glow), transparent 46%),
+        radial-gradient(ellipse at 50% 42%, color-mix(in srgb, var(--skin-2) 28%, transparent), transparent 38%),
         radial-gradient(ellipse at 50% 80%, rgba(8, 47, 73, 0.28), transparent 42%),
         #05030a;
+      transition: background 0.8s ease;
     }
 
     body.invert {
@@ -134,14 +143,14 @@
       50% { transform: scale(1.065); }
     }
 
-    .core.holding .pulse { animation: hold-shrink 3s linear forwards; }
+    .core.holding .pulse {
+      animation: none;
+      transform: scale(calc(1 - var(--press) * 0.2)) rotate(calc(var(--press) * -6deg));
+      filter: saturate(calc(1 + var(--press))) brightness(calc(1 + var(--press) * 0.35));
+    }
     .core.release .pulse { animation: release 0.62s cubic-bezier(0.16, 0.84, 0.32, 1) forwards; }
     .core.blink .pulse { animation: blink 0.22s linear 4; }
-    .core.flash .orb { filter: brightness(2.1) saturate(1.25); }
-
-    @keyframes hold-shrink {
-      to { transform: scale(0.52); filter: brightness(1.45); }
-    }
+    .core.flash .orb { filter: brightness(2.25) saturate(1.4) hue-rotate(18deg); }
 
     @keyframes release {
       0% { transform: scale(0.52); filter: brightness(1.8); }
@@ -177,16 +186,17 @@
     .orb {
       inset: 16%;
       background:
+        radial-gradient(circle at 50% 50%, #07040f 0 calc((22 - var(--open) * 14) * 1%), transparent calc((24 - var(--open) * 14) * 1%)),
         radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.98), transparent 16%),
-        radial-gradient(circle at 50% 55%, #fff 0 8%, var(--mood-2) 28%, var(--mood) 58%, #120816 86%);
+        radial-gradient(circle at 50% 55%, #fff 0 8%, var(--skin-2) 28%, var(--skin) 58%, #120816 86%);
       box-shadow:
         0 0 10px rgba(255, 255, 255, 0.45),
-        0 0 28px var(--mood),
-        0 0 70px var(--mood),
-        0 0 120px var(--mood-2),
+        0 0 28px var(--skin),
+        0 0 70px var(--skin),
+        0 0 120px var(--skin-2),
         inset 0 0 22px rgba(255, 255, 255, 0.28);
       translate: var(--lean-x, 0px) var(--lean-y, 0px);
-      transition: filter 0.18s ease, background 0.45s ease, translate 0.28s ease, inset 0.6s ease;
+      transition: filter 0.18s ease, background 0.7s ease, translate 0.28s ease, inset 0.7s ease, border-radius 0.8s ease;
     }
 
     .spark {
@@ -200,21 +210,55 @@
 
     .eye { display: none; }
 
-    body[data-level="2"] .orb,
-    body[data-level="3"] .orb {
-      inset: 8%;
+    body[data-level="2"] .orb {
+      inset: 6%;
       background:
         radial-gradient(circle at var(--ix, 50%) var(--iy, 42%), #05030a 0 16%, transparent 17%),
         radial-gradient(circle at var(--ix, 50%) var(--iy, 42%), #f4fbff 0 38%, transparent 39%),
-        radial-gradient(circle at 50% 56%, var(--mood-2), var(--mood) 48%, #07040f 78%);
+        radial-gradient(circle at 50% 56%, var(--skin-2), var(--skin) 48%, #07040f 78%);
       box-shadow:
-        0 0 18px #fff,
-        0 0 40px var(--mood-2),
-        0 0 90px var(--mood),
+        0 0 22px #fff,
+        0 0 48px var(--skin-2),
+        0 0 100px var(--skin),
         inset 0 0 24px rgba(255, 255, 255, 0.35);
     }
 
-    body[data-level="3"] .orb { inset: 22%; }
+    body[data-level="3"] .orb {
+      inset: 24%;
+      background:
+        radial-gradient(circle at 32% 30%, #fff, transparent 22%),
+        radial-gradient(circle at 50% 50%, var(--skin-2), var(--skin) 70%, #07040f);
+    }
+
+    body[data-level="4"] .orb {
+      inset: 20% 10%;
+      background:
+        radial-gradient(circle at 30% 28%, #fff 0 10%, transparent 22%),
+        radial-gradient(ellipse at 50% 50%, var(--skin-2), var(--skin) 55%, #1a0c04 88%);
+    }
+
+    body[data-level="5"] .orb {
+      inset: 12%;
+      background:
+        radial-gradient(circle at 50% 50%, #fff 0 14%, #ffe8a3 28%, var(--skin-2) 48%, var(--skin) 72%, #3b0a00);
+      animation: corona-breathe 1.4s ease-in-out infinite;
+    }
+
+    body[data-level="6"] .orb {
+      inset: 10%;
+      background:
+        radial-gradient(circle at 50% 50%, #fff 0 8%, transparent 18%),
+        conic-gradient(from 40deg, #22d3ee, #a78bfa, #f472b6, #67e8f9, #22d3ee);
+      animation: spin 18s linear infinite;
+      box-shadow:
+        0 0 24px #fff,
+        0 0 60px #22d3ee,
+        0 0 110px #a78bfa;
+    }
+
+    @keyframes corona-breathe {
+      50% { filter: brightness(1.25) saturate(1.2); }
+    }
 
     .lobe, .saturn, .rays, .spiral { display: none; position: absolute; pointer-events: none; }
 
@@ -222,10 +266,14 @@
       width: 46%;
       height: 46%;
       border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #fff, var(--mood-2) 40%, var(--mood) 72%);
-      box-shadow: 0 0 18px var(--mood), 0 0 36px var(--mood-2);
+      background: radial-gradient(circle at 35% 35%, #fff, var(--skin-2) 40%, var(--skin) 72%);
+      box-shadow: 0 0 18px var(--skin), 0 0 36px var(--skin-2);
       animation: lobe-breathe 2.6s ease-in-out infinite;
     }
+
+    .l1 { background: radial-gradient(circle at 35% 35%, #fff, #67e8f9 42%, #0891b2 78%); }
+    .l2 { background: radial-gradient(circle at 35% 35%, #fff, #f472b6 42%, #9d174d 78%); }
+    .l3 { background: radial-gradient(circle at 35% 35%, #fff, #fbbf24 42%, #b45309 78%); }
 
     .l2 { animation-delay: -0.8s; }
     .l3 { animation-delay: -1.6s; }
@@ -234,10 +282,7 @@
       50% { transform: scale(1.14); }
     }
 
-    body[data-level="3"] .lobe,
-    body[data-level="4"] .lobe,
-    body[data-level="5"] .lobe,
-    body[data-level="6"] .lobe { display: block; }
+    body[data-level="3"] .lobe { display: block; }
 
     .l1 { left: 4%; top: 28%; }
     .l2 { right: 4%; top: 28%; }
@@ -254,9 +299,7 @@
       box-shadow: 0 0 16px var(--mood-2), inset 0 0 12px var(--mood);
     }
 
-    body[data-level="4"] .saturn,
-    body[data-level="5"] .saturn,
-    body[data-level="6"] .saturn { display: block; }
+    body[data-level="4"] .saturn { display: block; }
 
     .pulse { perspective: 520px; }
 
@@ -272,8 +315,7 @@
       animation: spin 14s linear infinite;
     }
 
-    body[data-level="5"] .rays,
-    body[data-level="6"] .rays { display: block; }
+    body[data-level="5"] .rays { display: block; }
 
     .spiral {
       background: conic-gradient(from 20deg, transparent 0 40%, rgba(34, 211, 238, 0.85), transparent 68%, rgba(139, 92, 246, 0.9), transparent 100%);
@@ -284,7 +326,6 @@
     }
 
     body[data-level="6"] .spiral { display: block; }
-    body[data-level="6"] .orb { animation: spin 18s linear infinite; inset: 18%; }
 
     .spin-cue {
       position: absolute;
@@ -298,9 +339,24 @@
     body[data-mission="spin"] .spin-cue {
       opacity: 1;
       border-color: rgba(255, 255, 255, 0.8);
-      box-shadow: 0 0 18px var(--mood-2);
+      box-shadow: 0 0 18px var(--skin-2);
       animation: spin 2.8s linear infinite;
     }
+
+    .charge {
+      position: absolute;
+      inset: -14%;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0;
+      background: conic-gradient(from -90deg, var(--skin-2) calc(var(--charge) * 1turn), rgba(255, 255, 255, 0.08) 0);
+      -webkit-mask: radial-gradient(circle, transparent 58%, #000 60%, #000 70%, transparent 72%);
+      mask: radial-gradient(circle, transparent 58%, #000 60%, #000 70%, transparent 72%);
+      transition: opacity 0.2s ease;
+    }
+
+    .core.holding .charge,
+    body[data-mission="hold"] .charge { opacity: 1; }
 
     #cracks {
       position: absolute;
@@ -319,10 +375,11 @@
       filter: drop-shadow(0 0 4px #fff);
     }
 
-    .core.gulp .pulse { animation: gulp 0.32s ease; }
+    .core.gulp .pulse { animation: gulp 0.42s cubic-bezier(0.2, 1.4, 0.3, 1); }
 
     @keyframes gulp {
-      35% { transform: scale(1.16); }
+      0% { transform: scale(0.82); }
+      42% { transform: scale(1.2); }
       100% { transform: scale(1); }
     }
 
@@ -359,6 +416,28 @@
 
     @keyframes mote-call {
       50% { transform: scale(1.18); }
+    }
+
+    .mote.wild {
+      width: 36px;
+      height: 36px;
+      margin: -18px 0 0 -18px;
+      background: radial-gradient(circle at 35% 32%, #fff, #ffb703 40%, #ff5400 72%, transparent 78%);
+      box-shadow: 0 0 18px #ffb703, 0 0 32px #ff5400;
+      animation: mote-flee 0.32s ease-in-out infinite;
+    }
+
+    @keyframes mote-flee {
+      50% { transform: scale(1.22) translate(2px, -2px); }
+    }
+
+    .mote.tint {
+      background: radial-gradient(circle at 35% 32%, #fff, var(--mark) 48%, transparent 74%);
+      box-shadow: 0 0 16px var(--mark), 0 0 32px var(--mark);
+    }
+
+    .mote.twin {
+      box-shadow: 0 0 0 2px #fff, 0 0 18px var(--mark), 0 0 28px var(--skin-2);
     }
 
     #stars {
@@ -493,6 +572,13 @@
 
     body.ascend #stage,
     body.feast #stage { animation: tremor 0.45s linear 2; }
+    body.ascend .orb { animation: birth 0.95s cubic-bezier(0.16, 0.84, 0.28, 1); }
+
+    @keyframes birth {
+      0% { transform: scale(0.35) rotate(-24deg); filter: brightness(3) saturate(0.4); }
+      48% { transform: scale(1.28) rotate(8deg); filter: brightness(1.8); }
+      100% { transform: scale(1) rotate(0deg); filter: brightness(1); }
+    }
     body.surge .beat-ring { opacity: 1; border-color: #fff; }
     body.surge .orb { filter: brightness(1.35) saturate(1.2); }
     body.imminent .orb { animation: tremble 0.16s linear infinite; }
@@ -705,6 +791,7 @@
       <span class="rays"></span>
       <span class="spiral"></span>
       <span class="spin-cue"></span>
+      <span class="charge"></span>
       <svg id="cracks" viewBox="0 0 100 100" aria-hidden="true">
         <path d="M50 16 L47 38 L60 46 L42 68 L50 86" />
         <path d="M47 38 L24 44 L18 62" />
@@ -759,20 +846,32 @@
 
     var MISSIONS = [
       { type: "eat", need: 6, label: "Absorbe 6 luces" },
-      { type: "spin", need: 360, label: "Arrastra en círculo" },
-      { type: "chain", need: 4, label: "4 luces sin pausa" },
-      { type: "eat", need: 12, label: "Absorbe 12 luces" },
-      { type: "spin", need: 720, label: "Dos vueltas arrastrando" }
+      { type: "hold", need: 2, label: "Mantén pulsado hasta llenar el anillo" },
+      { type: "chase", need: 3, label: "Atrapa 3 veces la luz que huye" },
+      { type: "tint", need: 3, label: "Toca 3 luces del mismo color" },
+      { type: "spin", need: 360, label: "Arrastra el núcleo en círculo" },
+      { type: "pair", need: 2, label: "Toca las dos luces gemelas" }
     ];
+
+    var TINTS = ["#ff4d6d", "#4cc9f0", "#ffd166"];
+
+    var LEVEL_SKIN = {
+      1: { a: "", b: "" },
+      2: { a: "#67e8f9", b: "#f8fafc" },
+      3: { a: "#f472b6", b: "#67e8f9" },
+      4: { a: "#fbbf24", b: "#fff4d6" },
+      5: { a: "#fb923c", b: "#ffe8a3" },
+      6: { a: "#22d3ee", b: "#a78bfa" }
+    };
 
     var GLYPHS = ["◈", "✧", "☉", "⌬", "✶"];
 
     var SESSION_LINES = [
-      "La luz grande es la que quiere. Tócala, o toca el centro y la atrae.",
-      "Arrastra en círculo cuando la misión lo pida: el núcleo gira contigo.",
-      "Si absorbes seguido, armas una cadena. Si paras, vuelve a cero.",
-      "Quédate. Cuando tiene hambre, cada luz vale doble.",
-      "Las grietas blancas crecen al acercarte al siguiente nivel."
+      "La luz grande es la que pide. Tócala, o toca el centro y la traga.",
+      "Mantén el dedo: el anillo se llena. Suéltalo cuando cierre.",
+      "La luz naranja huye. Síguela y tócala.",
+      "Cuando el centro cambia de color, toca la luz de ese mismo color.",
+      "Arrastra en círculo. Las dos luces con aro blanco van juntas."
     ];
 
     var WHISPERS = [
@@ -856,6 +955,8 @@
     var rush = 1;
     var orbitR = 140;
     var feastTimer = 0;
+    var lastFed = null;
+    var lastDressed = "";
     var keyBuf = "";
     var invertTimer = 0;
     var idleTimer = 0;
@@ -984,7 +1085,14 @@
       fill.style.width = Math.round(ratio * 100) + "%";
       document.body.classList.toggle("imminent", state.level < 6 && ratio >= 0.82);
       var crack = state.level >= 6 ? 0 : Math.max(0, (ratio - 0.28) / 0.72);
-      document.documentElement.style.setProperty("--crack", crack.toFixed(2));
+      var skin = LEVEL_SKIN[state.level] || {};
+      var root = document.documentElement.style;
+      root.setProperty("--crack", crack.toFixed(2));
+      root.setProperty("--open", ratio.toFixed(3));
+      root.setProperty("--heat", ratio.toFixed(3));
+      root.setProperty("--skin", skin.a || MOODS[moodName].mood);
+      root.setProperty("--skin-2", skin.b || MOODS[moodName].mood2);
+      if (state.level >= 2) particleColor = skin.b || particleColor;
       renderRelics();
       renderQuest();
       syncOrbit();
@@ -1246,6 +1354,7 @@
         if (missionNow().type === "chain") missionProg = 0;
         renderCombo();
       }
+      tickPress(now, dt);
       placeMotes(dt);
       look();
       drawParticles();
@@ -1345,6 +1454,10 @@
         ? Math.min(100, Math.round(missionProg / m.need * 100)) + "%"
         : Math.min(missionProg, m.need) + "/" + m.need;
       questEl.textContent = m.label + " · " + shown;
+      if (lastDressed !== m.type) {
+        lastDressed = m.type;
+        dressMotes();
+      }
     }
 
     function renderStars() {
@@ -1435,6 +1548,7 @@
       state.questIndex = missionIndex;
       missionProg = 0;
       chainCount = 0;
+      lastDressed = "";
       saveState();
       document.body.classList.add("feast");
       clearTimeout(feastTimer);
@@ -1445,17 +1559,50 @@
       renderCombo();
     }
 
-    function noteEat() {
+    function addMission(n) {
+      missionProg += n;
+      if (missionProg >= missionNow().need) {
+        checkMission();
+        return;
+      }
+      var type = missionNow().type;
+      if (type === "chase") markWild();
+      if (type === "tint") markTint();
+      renderCombo();
+    }
+
+    function feedChain() {
       var now = performance.now();
       if (now - lastEat < 2200) chainCount += 1;
       else chainCount = 1;
       lastEat = now;
       rush = Math.min(3.4, rush + 0.45);
+    }
+
+    function scoreMission() {
       var m = missionNow();
-      if (m.type === "eat") missionProg += 1;
-      if (m.type === "chain") missionProg = chainCount;
-      if ((m.type === "eat" || m.type === "chain") && missionProg >= m.need) checkMission();
-      else renderCombo();
+      if (m.type === "eat" || m.type === "chain") {
+        if (m.type === "eat") missionProg += 1;
+        if (m.type === "chain") missionProg = chainCount;
+        if (missionProg >= m.need) checkMission();
+        else renderCombo();
+        lastFed = null;
+        return;
+      }
+      if (lastFed) {
+        if (m.type === "chase" && lastFed.kind === "wild") addMission(1);
+        else if (m.type === "tint" && lastFed.kind === "tint") addMission(1);
+        else if (m.type === "pair" && lastFed.kind === "twin" && !lastFed.taken) {
+          lastFed.taken = true;
+          lastFed.el.classList.remove("twin");
+          addMission(1);
+        } else {
+          renderCombo();
+        }
+      } else {
+        renderCombo();
+      }
+      lastFed = null;
     }
 
     function addSpin(deg) {
@@ -1463,6 +1610,97 @@
       missionProg += deg;
       if (missionProg >= missionNow().need) checkMission();
       else renderQuest();
+    }
+
+    function liveMotes() {
+      var now = performance.now();
+      var list = [];
+      var i;
+      for (i = 0; i < motes.length; i++) {
+        if (motes[i].hide <= now) list.push(motes[i]);
+      }
+      return list.length ? list : motes.slice();
+    }
+
+    function pickMote(except) {
+      var list = liveMotes();
+      var pool = [];
+      var i;
+      for (i = 0; i < list.length; i++) {
+        if (list[i] !== except) pool.push(list[i]);
+      }
+      if (!pool.length) pool = list;
+      return pool[Math.floor(Math.random() * pool.length)] || null;
+    }
+
+    function clearKinds() {
+      var i;
+      for (i = 0; i < motes.length; i++) {
+        motes[i].kind = "";
+        motes[i].taken = false;
+        motes[i].el.classList.remove("wild", "tint", "twin");
+      }
+    }
+
+    function markWild() {
+      clearKinds();
+      var m = pickMote();
+      if (!m) return;
+      m.kind = "wild";
+      m.el.classList.add("wild");
+    }
+
+    function markTint() {
+      clearKinds();
+      var color = TINTS[Math.floor(Math.random() * TINTS.length)];
+      document.documentElement.style.setProperty("--mark", color);
+      var m = pickMote();
+      if (!m) return;
+      m.kind = "tint";
+      m.el.classList.add("tint");
+    }
+
+    function markPair() {
+      clearKinds();
+      var a = pickMote();
+      var b = pickMote(a);
+      if (!a) return;
+      a.kind = "twin";
+      a.el.classList.add("twin");
+      if (b && b !== a) {
+        b.kind = "twin";
+        b.el.classList.add("twin");
+      }
+      document.documentElement.style.setProperty("--mark", "#fff4d6");
+    }
+
+    function dressMotes() {
+      ensureMotes();
+      var type = missionNow().type;
+      if (type === "chase") markWild();
+      else if (type === "tint") markTint();
+      else if (type === "pair") markPair();
+      else clearKinds();
+    }
+
+    function tickPress(now, dt) {
+      var root = document.documentElement.style;
+      if (core.classList.contains("holding") && drag) {
+        var held = now - drag.t;
+        var p = Math.min(1.15, held / 1400);
+        root.setProperty("--press", p.toFixed(3));
+        root.setProperty("--charge", Math.min(1, held / 1400).toFixed(3));
+        if (missionNow().type === "hold" && held >= 1400 && drag.moved < 18 && !drag.charged) {
+          drag.charged = true;
+          floatText("Carga");
+          tone(420, 0.2, "sine", 0.03, 1.1);
+          addMission(1);
+        }
+      } else {
+        var cur = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--press")) || 0;
+        root.setProperty("--press", Math.max(0, cur - dt / 160).toFixed(3));
+        root.setProperty("--charge", "0");
+      }
     }
 
     function bindMote(mote) {
@@ -1500,7 +1738,9 @@
           speed: (0.00115 + motes.length * 0.00022) * (motes.length % 2 ? -1 : 1),
           hide: 0,
           x: 0,
-          y: 0
+          y: 0,
+          kind: "",
+          taken: false
         };
         moteLayer.appendChild(el);
         motes.push(mote);
@@ -1519,7 +1759,7 @@
       var i;
       for (i = 0; i < motes.length; i++) {
         var m = motes[i];
-        m.ang += m.speed * dt * rush;
+        m.ang += m.speed * dt * rush * (m.kind === "wild" ? 3.2 : 1);
         if (m.hide > performance.now()) {
           m.el.style.opacity = "0";
           m.el.style.pointerEvents = "none";
@@ -1528,7 +1768,7 @@
         }
         m.el.style.opacity = "1";
         m.el.style.pointerEvents = "auto";
-        m.el.style.transform = "";
+        if (m.kind !== "wild") m.el.style.transform = "";
         var rad = limit * m.radius;
         m.x = c.x + Math.cos(m.ang) * rad;
         m.y = c.y + Math.sin(m.ang) * rad * 0.8;
@@ -1541,11 +1781,22 @@
         }
         m.el.classList.remove("near");
       }
-      targetMote = nearest;
-      if (nearest) {
-        nearest.el.classList.add("near");
-        var dx = nearest.x - c.x;
-        var dy = nearest.y - c.y;
+      var want = missionNow().type;
+      var marked = null;
+      for (i = 0; i < motes.length; i++) {
+        if (motes[i].hide > performance.now()) continue;
+        if ((want === "chase" && motes[i].kind === "wild") ||
+            (want === "tint" && motes[i].kind === "tint") ||
+            (want === "pair" && motes[i].kind === "twin" && !motes[i].taken)) {
+          marked = motes[i];
+          break;
+        }
+      }
+      targetMote = marked || nearest;
+      if (targetMote) {
+        targetMote.el.classList.add("near");
+        var dx = targetMote.x - c.x;
+        var dy = targetMote.y - c.y;
         var dist = Math.hypot(dx, dy) || 1;
         document.documentElement.style.setProperty("--lean-x", (dx / dist * 14).toFixed(1) + "px");
         document.documentElement.style.setProperty("--lean-y", (dy / dist * 10).toFixed(1) + "px");
@@ -1554,6 +1805,7 @@
 
     function swallow(m) {
       if (!m || m.hide > performance.now()) return false;
+      lastFed = m;
       var c = center();
       m.hide = performance.now() + 820;
       m.el.style.pointerEvents = "none";
@@ -1584,8 +1836,8 @@
       core.classList.remove("gulp");
       void core.offsetWidth;
       core.classList.add("gulp");
-      noteEat();
-      renderCombo();
+      feedChain();
+      scoreMission();
       state.clicks += gain;
       state.level = levelFromClicks(state.clicks);
       var evolved = state.level > prevLevel;
@@ -1688,7 +1940,9 @@
         x: e.clientX,
         y: e.clientY,
         ang: Math.atan2(e.clientY - c.y, e.clientX - c.x),
-        moved: 0
+        moved: 0,
+        t: performance.now(),
+        charged: false
       };
       try { core.setPointerCapture(e.pointerId); } catch (err) {}
       core.classList.add("holding");
