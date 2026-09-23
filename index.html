@@ -177,15 +177,16 @@
     .orb {
       inset: 16%;
       background:
-        radial-gradient(circle at 34% 30%, rgba(255, 255, 255, 0.96), transparent 18%),
-        radial-gradient(circle at 50% 58%, var(--mood-2), var(--mood) 42%, #14081f 78%);
+        radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.98), transparent 16%),
+        radial-gradient(circle at 50% 55%, #fff 0 8%, var(--mood-2) 28%, var(--mood) 58%, #120816 86%);
       box-shadow:
         0 0 10px rgba(255, 255, 255, 0.45),
         0 0 28px var(--mood),
         0 0 70px var(--mood),
         0 0 120px var(--mood-2),
         inset 0 0 22px rgba(255, 255, 255, 0.28);
-      transition: filter 0.18s ease, background 0.4s ease;
+      translate: var(--lean-x, 0px) var(--lean-y, 0px);
+      transition: filter 0.18s ease, background 0.45s ease, translate 0.28s ease, inset 0.6s ease;
     }
 
     .spark {
@@ -195,53 +196,169 @@
       opacity: 0.9;
     }
 
-    .eye {
-      position: absolute;
-      left: 50%;
-      top: 46%;
-      width: 30%;
-      height: 16%;
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.94);
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.45);
-      overflow: hidden;
-      z-index: 6;
-      pointer-events: none;
-      transition: height 0.45s ease, opacity 0.45s ease;
+    .beat-ring { display: none; }
+
+    .eye { display: none; }
+
+    body[data-level="2"] .orb,
+    body[data-level="3"] .orb {
+      inset: 8%;
+      background:
+        radial-gradient(circle at var(--ix, 50%) var(--iy, 42%), #05030a 0 16%, transparent 17%),
+        radial-gradient(circle at var(--ix, 50%) var(--iy, 42%), #f4fbff 0 38%, transparent 39%),
+        radial-gradient(circle at 50% 56%, var(--mood-2), var(--mood) 48%, #07040f 78%);
+      box-shadow:
+        0 0 18px #fff,
+        0 0 40px var(--mood-2),
+        0 0 90px var(--mood),
+        inset 0 0 24px rgba(255, 255, 255, 0.35);
     }
 
-    .pupil {
-      position: absolute;
-      width: 40%;
-      height: 78%;
+    body[data-level="3"] .orb { inset: 22%; }
+
+    .lobe, .saturn, .rays, .spiral { display: none; position: absolute; pointer-events: none; }
+
+    .lobe {
+      width: 46%;
+      height: 46%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff, var(--mood-2) 40%, var(--mood) 72%);
+      box-shadow: 0 0 18px var(--mood), 0 0 36px var(--mood-2);
+      animation: lobe-breathe 2.6s ease-in-out infinite;
+    }
+
+    .l2 { animation-delay: -0.8s; }
+    .l3 { animation-delay: -1.6s; }
+
+    @keyframes lobe-breathe {
+      50% { transform: scale(1.14); }
+    }
+
+    body[data-level="3"] .lobe,
+    body[data-level="4"] .lobe,
+    body[data-level="5"] .lobe,
+    body[data-level="6"] .lobe { display: block; }
+
+    .l1 { left: 4%; top: 28%; }
+    .l2 { right: 4%; top: 28%; }
+    .l3 { left: 29%; bottom: 6%; }
+
+    .saturn {
       left: 50%;
       top: 50%;
+      width: 168%;
+      height: 42%;
+      border: 7px solid rgba(255, 255, 255, 0.82);
       border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #6d5a8a, #120818 55%);
-      transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%) rotateX(72deg) rotate(var(--twist, 0deg));
+      box-shadow: 0 0 16px var(--mood-2), inset 0 0 12px var(--mood);
     }
 
-    body[data-level="1"] .eye,
-    body.asleep .eye {
-      height: 3.5%;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.8);
+    body[data-level="4"] .saturn,
+    body[data-level="5"] .saturn,
+    body[data-level="6"] .saturn { display: block; }
+
+    .pulse { perspective: 520px; }
+
+    .rays, .spiral {
+      inset: -28%;
+      border-radius: 50%;
     }
 
-    body[data-level="1"] .pupil,
-    body.asleep .pupil { opacity: 0; }
-
-    .eye.pop { animation: eye-pop 0.22s ease; }
-
-    @keyframes eye-pop {
-      50% { transform: translate(-50%, -50%) scale(1.18); }
+    .rays {
+      background: repeating-conic-gradient(from 0deg, transparent 0 14deg, rgba(255, 255, 255, 0.72) 14deg 16deg);
+      -webkit-mask: radial-gradient(circle, transparent 36%, #000 48%, transparent 70%);
+      mask: radial-gradient(circle, transparent 36%, #000 48%, transparent 70%);
+      animation: spin 14s linear infinite;
     }
 
-    .core.hot .beat-ring {
-      border-color: #fff;
+    body[data-level="5"] .rays,
+    body[data-level="6"] .rays { display: block; }
+
+    .spiral {
+      background: conic-gradient(from 20deg, transparent 0 40%, rgba(34, 211, 238, 0.85), transparent 68%, rgba(139, 92, 246, 0.9), transparent 100%);
+      -webkit-mask: radial-gradient(circle, transparent 18%, #000 30%, transparent 62%);
+      mask: radial-gradient(circle, transparent 18%, #000 30%, transparent 62%);
+      animation: spin 9s linear infinite reverse;
+      mix-blend-mode: screen;
+    }
+
+    body[data-level="6"] .spiral { display: block; }
+    body[data-level="6"] .orb { animation: spin 18s linear infinite; inset: 18%; }
+
+    .spin-cue {
+      position: absolute;
+      inset: -24%;
+      border-radius: 50%;
+      border: 2px dashed rgba(255, 255, 255, 0.2);
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    body[data-mission="spin"] .spin-cue {
       opacity: 1;
-      box-shadow: 0 0 18px #fff, 0 0 36px var(--mood-2);
+      border-color: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 0 18px var(--mood-2);
+      animation: spin 2.8s linear infinite;
+    }
+
+    #cracks {
+      position: absolute;
+      inset: 10%;
+      opacity: var(--crack, 0);
+      pointer-events: none;
+      z-index: 7;
+      transition: opacity 0.3s linear;
+    }
+
+    #cracks path {
+      fill: none;
+      stroke: #fff;
+      stroke-width: 1.4;
+      stroke-linecap: round;
+      filter: drop-shadow(0 0 4px #fff);
+    }
+
+    .core.gulp .pulse { animation: gulp 0.32s ease; }
+
+    @keyframes gulp {
+      35% { transform: scale(1.16); }
+      100% { transform: scale(1); }
+    }
+
+    #motes {
+      position: fixed;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .mote {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      margin: -14px 0 0 -14px;
+      border: 0;
+      padding: 0;
+      border-radius: 50%;
+      pointer-events: auto;
+      cursor: pointer;
+      background: radial-gradient(circle at 35% 32%, #fff, var(--mood-2) 46%, transparent 74%);
+      box-shadow: 0 0 14px var(--mood-2), 0 0 26px var(--mood);
+      touch-action: manipulation;
+    }
+
+    .mote.near {
+      width: 48px;
+      height: 48px;
+      margin: -24px 0 0 -24px;
+      background: radial-gradient(circle at 35% 32%, #fff 0 28%, var(--mood-2) 52%, transparent 76%);
+      box-shadow: 0 0 18px #fff, 0 0 36px var(--mood-2), 0 0 60px var(--mood);
+      animation: mote-call 0.7s ease-in-out infinite;
+    }
+
+    @keyframes mote-call {
+      50% { transform: scale(1.18); }
     }
 
     #stars {
@@ -374,7 +491,8 @@
       to { transform: translate(-50%, -72px); opacity: 0; }
     }
 
-    body.ascend #stage { animation: tremor 0.45s linear 2; }
+    body.ascend #stage,
+    body.feast #stage { animation: tremor 0.45s linear 2; }
     body.surge .beat-ring { opacity: 1; border-color: #fff; }
     body.surge .orb { filter: brightness(1.35) saturate(1.2); }
     body.imminent .orb { animation: tremble 0.16s linear infinite; }
@@ -449,6 +567,8 @@
       opacity: 0;
     }
 
+    #mark { z-index: 8; }
+    #hint, #quest, #msg, #hud, #relics, #meter { z-index: 8; }
     #hint.show { animation: fade-in 2.2s ease 0.7s forwards; }
     #hint.hide { animation: fade-out 0.8s ease forwards; }
 
@@ -578,15 +698,27 @@
         <span class="ring r1"></span>
       <span class="orb"></span>
       <span class="spark"></span>
-      <div id="eye" class="eye"><div id="pupil" class="pupil"></div></div>
+      <span class="lobe l1"></span>
+      <span class="lobe l2"></span>
+      <span class="lobe l3"></span>
+      <span class="saturn"></span>
+      <span class="rays"></span>
+      <span class="spiral"></span>
+      <span class="spin-cue"></span>
+      <svg id="cracks" viewBox="0 0 100 100" aria-hidden="true">
+        <path d="M50 16 L47 38 L60 46 L42 68 L50 86" />
+        <path d="M47 38 L24 44 L18 62" />
+        <path d="M60 46 L78 40 L84 58" />
+      </svg>
       </div>
       <div id="stars"></div>
       <div id="sigil"></div>
     </div>
   </div>
 
-  <p id="hint" class="ghost">Toca el Núcleo cuando el anillo brille</p>
-  <p id="quest" class="ghost">Acierta 5 seguidos · 0/5</p>
+  <div id="motes"></div>
+  <p id="hint" class="ghost">Toca el Núcleo o una luz que gira</p>
+  <p id="quest" class="ghost">Absorbe 6 luces · 0/6</p>
   <p id="msg" class="ghost" aria-live="polite"></p>
   <p id="relics" class="ghost" aria-hidden="true"></p>
   <div id="meter" aria-hidden="true"><span id="fill"></span></div>
@@ -618,29 +750,29 @@
     };
 
     var REWARD = {
-      2: "Nivel 2. El ojo se abre y te sigue con la mirada.",
-      3: "Nivel 3. Una luna empieza a girar a su alrededor.",
-      4: "Nivel 4. Aparece un segundo anillo. Ya se nota el cambio.",
-      5: "Nivel 5. Cada acierto vale más. Subes más rápido.",
-      6: "Nivel 6. Forma completa: cinco lunas y los cinco signos."
+      2: "Nivel 2. El círculo se abrió: ahora es un iris.",
+      3: "Nivel 3. Se partió en tres.",
+      4: "Nivel 4. Le nacieron anillos.",
+      5: "Nivel 5. Arde. Le salen rayos.",
+      6: "Nivel 6. Se volvió una galaxia."
     };
 
-    var QUESTS = [
-      { n: 5, label: "Acierta 5 seguidos" },
-      { n: 8, label: "Acierta 8 seguidos" },
-      { n: 12, label: "Acierta 12 seguidos" },
-      { n: 16, label: "Acierta 16 seguidos" },
-      { n: 21, label: "Acierta 21 seguidos" }
+    var MISSIONS = [
+      { type: "eat", need: 6, label: "Absorbe 6 luces" },
+      { type: "spin", need: 360, label: "Arrastra en círculo" },
+      { type: "chain", need: 4, label: "4 luces sin pausa" },
+      { type: "eat", need: 12, label: "Absorbe 12 luces" },
+      { type: "spin", need: 720, label: "Dos vueltas arrastrando" }
     ];
 
     var GLYPHS = ["◈", "✧", "☉", "⌬", "✶"];
 
     var SESSION_LINES = [
-      "Sigue. La barra de abajo es el camino al siguiente nivel.",
-      "El anillo blanco es el momento. Ahí vale más.",
-      "Si encadenas aciertos, cada toque cuenta doble o triple.",
-      "Quédate un rato: a veces el núcleo te regala aciertos.",
-      "Casi no corta la racha. Fallar lejos sí."
+      "La luz grande es la que quiere. Tócala, o toca el centro y la atrae.",
+      "Arrastra en círculo cuando la misión lo pida: el núcleo gira contigo.",
+      "Si absorbes seguido, armas una cadena. Si paras, vuelve a cero.",
+      "Quédate. Cuando tiene hambre, cada luz vale doble.",
+      "Las grietas blancas crecen al acercarte al siguiente nivel."
     ];
 
     var WHISPERS = [
@@ -712,7 +844,18 @@
     var starsEl = document.getElementById("stars");
     var pupil = document.getElementById("pupil");
     var eye = document.getElementById("eye");
-    var questIndex = state.questIndex || 0;
+    var missionIndex = state.questIndex || 0;
+    var missionProg = 0;
+    var chainCount = 0;
+    var lastEat = 0;
+    var motes = [];
+    var moteLayer = document.getElementById("motes");
+    var drag = null;
+    var targetMote = null;
+    var twist = 0;
+    var rush = 1;
+    var orbitR = 140;
+    var feastTimer = 0;
     var keyBuf = "";
     var invertTimer = 0;
     var idleTimer = 0;
@@ -840,6 +983,8 @@
       hud.textContent = "Día " + state.streak + " · Nivel " + state.level;
       fill.style.width = Math.round(ratio * 100) + "%";
       document.body.classList.toggle("imminent", state.level < 6 && ratio >= 0.82);
+      var crack = state.level >= 6 ? 0 : Math.max(0, (ratio - 0.28) / 0.72);
+      document.documentElement.style.setProperty("--crack", crack.toFixed(2));
       renderRelics();
       renderQuest();
       syncOrbit();
@@ -1065,6 +1210,22 @@
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fill();
       }
+      var hub = center();
+      ctx.beginPath();
+      ctx.strokeStyle = "rgba(255,255,255,0.16)";
+      ctx.lineWidth = 1;
+      ctx.arc(hub.x, hub.y, orbitR, 0, Math.PI * 2);
+      ctx.stroke();
+      if (targetMote && targetMote.x != null && targetMote.hide <= performance.now()) {
+        ctx.strokeStyle = "rgba(255,255,255,0.75)";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 7]);
+        ctx.beginPath();
+        ctx.moveTo(hub.x, hub.y);
+        ctx.lineTo(targetMote.x, targetMote.y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
       ctx.globalAlpha = 1;
       ctx.globalCompositeOperation = "source-over";
     }
@@ -1080,12 +1241,12 @@
           absorbMote();
         }
       }
-      if (combo && now - comboAt > comboWindow()) {
-        combo = 0;
+      if (chainCount && now - lastEat > 2200) {
+        chainCount = 0;
+        if (missionNow().type === "chain") missionProg = 0;
         renderCombo();
       }
-      var hot = !document.body.classList.contains("asleep") && pulsePhase() > 0.38 && pulsePhase() < 0.62;
-      core.classList.toggle("hot", hot);
+      placeMotes(dt);
       look();
       drawParticles();
       requestAnimationFrame(frame);
@@ -1165,8 +1326,8 @@
 
     function renderCombo() {
       if (!comboEl) return;
-      if (combo >= 2) {
-        comboEl.textContent = "Racha ×" + combo;
+      if (chainCount >= 2 && performance.now() - lastEat < 2200) {
+        comboEl.textContent = "Cadena ×" + chainCount;
         comboEl.classList.add("on");
       } else {
         comboEl.textContent = "";
@@ -1178,17 +1339,17 @@
 
     function renderQuest() {
       if (!questEl) return;
-      if (questIndex >= QUESTS.length) {
-        questEl.textContent = "Supera tu récord · mejor ×" + (state.bestCombo || 0);
-        return;
-      }
-      var q = QUESTS[questIndex];
-      questEl.textContent = q.label + " · " + Math.min(combo, q.n) + "/" + q.n;
+      var m = missionNow();
+      document.body.dataset.mission = m.type;
+      var shown = m.type === "spin"
+        ? Math.min(100, Math.round(missionProg / m.need * 100)) + "%"
+        : Math.min(missionProg, m.need) + "/" + m.need;
+      questEl.textContent = m.label + " · " + shown;
     }
 
     function renderStars() {
       if (!starsEl) return;
-      var n = Math.min(combo, 10);
+      var n = Math.min(chainCount, 8);
       var html = "";
       var i;
       for (i = 0; i < n; i++) {
@@ -1201,13 +1362,15 @@
     }
 
     function look() {
-      if (!pupil || state.level < 2 || document.body.classList.contains("asleep")) return;
       var c = center();
       var dx = mouse.x - c.x;
       var dy = mouse.y - c.y;
       var dist = Math.hypot(dx, dy) || 1;
-      var pull = Math.min(7, dist / 28);
-      pupil.style.transform = "translate(calc(-50% + " + (dx / dist * pull).toFixed(1) + "px), calc(-50% + " + (dy / dist * pull).toFixed(1) + "px))";
+      var pull = Math.min(10, dist / 22);
+      var x = 50 + (dx / dist) * pull;
+      var y = 46 + (dy / dist) * pull;
+      document.documentElement.style.setProperty("--ix", x.toFixed(1) + "%");
+      document.documentElement.style.setProperty("--iy", y.toFixed(1) + "%");
     }
 
     function floatText(text) {
@@ -1242,7 +1405,7 @@
         document.body.classList.add("surge");
         clearTimeout(surgeTimer);
         surgeTimer = setTimeout(function () { document.body.classList.remove("surge"); }, 8000);
-        say("Regalo: los próximos toques cuentan como perfectos.");
+        say("Hambre: las próximas 8 luces valen doble.");
         playChord();
       }
     }
@@ -1261,47 +1424,167 @@
 
     var surgeTimer = 0;
 
+    /* Las luces orbitan. La más cercana brilla: tocarla o tocar el núcleo la traga. */
+    function missionNow() {
+      return MISSIONS[missionIndex % MISSIONS.length];
+    }
+
+    function checkMission() {
+      var label = missionNow().label;
+      missionIndex += 1;
+      state.questIndex = missionIndex;
+      missionProg = 0;
+      chainCount = 0;
+      saveState();
+      document.body.classList.add("feast");
+      clearTimeout(feastTimer);
+      feastTimer = setTimeout(function () { document.body.classList.remove("feast"); }, 700);
+      say("Listo: " + label + ".");
+      explode();
+      playChord();
+      renderCombo();
+    }
+
+    function noteEat() {
+      var now = performance.now();
+      if (now - lastEat < 2200) chainCount += 1;
+      else chainCount = 1;
+      lastEat = now;
+      rush = Math.min(3.4, rush + 0.45);
+      var m = missionNow();
+      if (m.type === "eat") missionProg += 1;
+      if (m.type === "chain") missionProg = chainCount;
+      if ((m.type === "eat" || m.type === "chain") && missionProg >= m.need) checkMission();
+      else renderCombo();
+    }
+
+    function addSpin(deg) {
+      if (deg <= 0 || missionNow().type !== "spin") return;
+      missionProg += deg;
+      if (missionProg >= missionNow().need) checkMission();
+      else renderQuest();
+    }
+
+    function bindMote(mote) {
+      mote.el.addEventListener("pointerdown", function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        audio();
+        noteActivity();
+        swallow(mote);
+        registerClick();
+      });
+    }
+
+    function orbitLimit() {
+      var c = center();
+      var hintTop = hint ? hint.getBoundingClientRect().top : window.innerHeight * 0.7;
+      var down = hintTop - c.y - 42;
+      var up = c.y - 72;
+      var room = Math.min(down / 0.8, up, window.innerWidth * 0.32);
+      return Math.max(88, room);
+    }
+
+    function ensureMotes() {
+      if (!moteLayer) return;
+      var want = 4;
+      while (motes.length < want) {
+        var el = document.createElement("button");
+        el.type = "button";
+        el.className = "mote";
+        el.setAttribute("aria-label", "Luz");
+        var mote = {
+          el: el,
+          ang: Math.random() * Math.PI * 2,
+          radius: [0.86, 0.86, 1, 1][motes.length],
+          speed: (0.00115 + motes.length * 0.00022) * (motes.length % 2 ? -1 : 1),
+          hide: 0,
+          x: 0,
+          y: 0
+        };
+        moteLayer.appendChild(el);
+        motes.push(mote);
+        bindMote(mote);
+      }
+    }
+
+    function placeMotes(dt) {
+      ensureMotes();
+      rush += (1 - rush) * Math.min(1, dt / 900);
+      var c = center();
+      var limit = orbitLimit();
+      orbitR = limit * 0.86;
+      var nearest = null;
+      var best = Infinity;
+      var i;
+      for (i = 0; i < motes.length; i++) {
+        var m = motes[i];
+        m.ang += m.speed * dt * rush;
+        if (m.hide > performance.now()) {
+          m.el.style.opacity = "0";
+          m.el.style.pointerEvents = "none";
+          m.el.classList.remove("near");
+          continue;
+        }
+        m.el.style.opacity = "1";
+        m.el.style.pointerEvents = "auto";
+        m.el.style.transform = "";
+        var rad = limit * m.radius;
+        m.x = c.x + Math.cos(m.ang) * rad;
+        m.y = c.y + Math.sin(m.ang) * rad * 0.8;
+        m.el.style.left = m.x + "px";
+        m.el.style.top = m.y + "px";
+        var d = Math.hypot(m.x - c.x, m.y - c.y);
+        if (d < best) {
+          best = d;
+          nearest = m;
+        }
+        m.el.classList.remove("near");
+      }
+      targetMote = nearest;
+      if (nearest) {
+        nearest.el.classList.add("near");
+        var dx = nearest.x - c.x;
+        var dy = nearest.y - c.y;
+        var dist = Math.hypot(dx, dy) || 1;
+        document.documentElement.style.setProperty("--lean-x", (dx / dist * 14).toFixed(1) + "px");
+        document.documentElement.style.setProperty("--lean-y", (dy / dist * 10).toFixed(1) + "px");
+      }
+    }
+
+    function swallow(m) {
+      if (!m || m.hide > performance.now()) return false;
+      var c = center();
+      m.hide = performance.now() + 820;
+      m.el.style.pointerEvents = "none";
+      m.el.style.transition = "left 0.16s ease, top 0.16s ease, opacity 0.16s ease, transform 0.16s ease";
+      m.el.style.left = c.x + "px";
+      m.el.style.top = c.y + "px";
+      m.el.style.transform = "scale(0.15)";
+      m.el.style.opacity = "0.2";
+      m.ang = Math.random() * Math.PI * 2;
+      setTimeout(function () {
+        m.el.style.transition = "";
+        m.el.style.transform = "";
+      }, 180);
+      return true;
+    }
+
     function registerClick() {
       noteActivity();
       var today = todayKey();
       var hadWhisper = state.lastWhisperDate === today;
       var prevLevel = state.level;
-      var phase = pulsePhase();
-      var inBeat = phase > 0.38 && phase < 0.62;
-      var near = !inBeat && ((phase > 0.28 && phase < 0.38) || (phase > 0.62 && phase < 0.72));
-      var perfect = inBeat || blessings > 0;
       var gain = 1;
-      if (!inBeat && blessings > 0) blessings -= 1;
-      if (perfect) {
-        combo += 1;
-        comboAt = performance.now();
-        if (combo >= 12) gain = 4;
-        else if (combo >= 7) gain = 3;
-        else if (combo >= 3) gain = 2;
-        if (state.level >= 5 && combo >= 3) gain += 1;
-        floatText(gain > 1 ? "Perfecto +" + gain : "Perfecto");
-        if (eye) {
-          eye.classList.remove("pop");
-          void eye.offsetWidth;
-          eye.classList.add("pop");
-        }
-        if (combo > state.bestCombo) state.bestCombo = combo;
-        if (questIndex < QUESTS.length && combo >= QUESTS[questIndex].n) {
-          var doneLabel = QUESTS[questIndex].label;
-          questIndex += 1;
-          state.questIndex = questIndex;
-          say("Misión lista: " + doneLabel + ".");
-          explode();
-        }
-      } else if (near) {
-        floatText("Casi");
-        comboAt = performance.now();
-      } else if (combo >= 2) {
-        floatText("Se cortó");
-        combo = 0;
-      } else {
-        combo = 0;
+      if (blessings > 0) {
+        blessings -= 1;
+        gain = 2;
       }
+      floatText(gain > 1 ? "+2" : "Luz");
+      core.classList.remove("gulp");
+      void core.offsetWidth;
+      core.classList.add("gulp");
+      noteEat();
       renderCombo();
       state.clicks += gain;
       state.level = levelFromClicks(state.clicks);
@@ -1311,7 +1594,6 @@
       applyLevel();
       spawnWave();
       flash();
-      if (perfect) shootOne();
       shootOne();
       playClick();
       if (hint.classList.contains("show")) {
@@ -1401,6 +1683,13 @@
       audio();
       noteActivity();
       holdFired = false;
+      var c = center();
+      drag = {
+        x: e.clientX,
+        y: e.clientY,
+        ang: Math.atan2(e.clientY - c.y, e.clientX - c.x),
+        moved: 0
+      };
       try { core.setPointerCapture(e.pointerId); } catch (err) {}
       core.classList.add("holding");
       clearTimeout(holdTimer);
@@ -1411,10 +1700,14 @@
       if (e.button !== 0) return;
       clearTimeout(holdTimer);
       core.classList.remove("holding");
+      var moved = drag ? drag.moved : 0;
+      drag = null;
       if (holdFired) {
         holdFired = false;
         return;
       }
+      if (moved > 22) return;
+      swallow(targetMote);
       registerClick();
     }
 
@@ -1443,6 +1736,7 @@
     core.addEventListener("pointercancel", function () {
       clearTimeout(holdTimer);
       core.classList.remove("holding");
+      drag = null;
     });
     core.addEventListener("dblclick", function (e) {
       e.preventDefault();
@@ -1459,6 +1753,7 @@
       if (e.animationName === "release" && e.target.classList.contains("pulse")) {
         core.classList.remove("release");
       }
+      if (e.animationName === "gulp") core.classList.remove("gulp");
     });
 
     window.addEventListener("contextmenu", function (e) {
@@ -1469,6 +1764,27 @@
     window.addEventListener("pointermove", function (e) {
       mouse.x = e.clientX;
       mouse.y = e.clientY;
+      if (drag && (e.buttons & 1)) {
+        var c = center();
+        var ang = Math.atan2(e.clientY - c.y, e.clientX - c.x);
+        var delta = ang - drag.ang;
+        if (delta > Math.PI) delta -= Math.PI * 2;
+        if (delta < -Math.PI) delta += Math.PI * 2;
+        drag.ang = ang;
+        drag.moved += Math.hypot(e.clientX - drag.x, e.clientY - drag.y);
+        drag.x = e.clientX;
+        drag.y = e.clientY;
+        var deg = Math.min(42, Math.abs(delta) * 180 / Math.PI);
+        if (deg > 0.35) {
+          twist += delta < 0 ? -deg : deg;
+          document.documentElement.style.setProperty("--twist", twist.toFixed(1) + "deg");
+          addSpin(deg);
+          if (drag.moved > 12) {
+            clearTimeout(holdTimer);
+            core.classList.remove("holding");
+          }
+        }
+      }
       look();
       noteActivity();
     });
