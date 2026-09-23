@@ -228,8 +228,105 @@
 
     body.asleep { --glow: 0.28; }
     body.asleep .orb { filter: brightness(0.42) saturate(0.65); }
-    body.asleep .ring { animation-play-state: paused; opacity: 0.25; }
+    body.asleep .ring,
+    body.asleep .beat-ring { animation-play-state: paused; opacity: 0.25; }
     body.asleep .halo-b { opacity: 0.12; }
+
+    /* El anillo se cierra sobre el núcleo: el latido justo es cuando lo toca. */
+    .beat-ring {
+      position: absolute;
+      inset: -6%;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255, 255, 255, 0.55);
+      box-shadow: 0 0 16px var(--mood-2);
+      opacity: 0.28;
+      pointer-events: none;
+      animation: beat var(--dur) ease-in-out infinite;
+    }
+
+    @keyframes beat {
+      0%, 100% { transform: scale(1.42); opacity: 0.12; }
+      50% { transform: scale(0.9); opacity: 0.9; }
+    }
+
+    #orbit {
+      position: absolute;
+      inset: -22%;
+      pointer-events: none;
+    }
+
+    .moon-spin {
+      position: absolute;
+      inset: 0;
+      animation: spin linear infinite;
+    }
+
+    .moon-spin i {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 7px;
+      height: 7px;
+      margin-left: -3.5px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 10px var(--mood-2), 0 0 18px var(--mood);
+    }
+
+    #combo {
+      position: absolute;
+      top: -1.8rem;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-family: Inter, system-ui, sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.24em;
+      color: #fff;
+      text-shadow: 0 0 12px var(--mood-2);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    #combo.on { opacity: 0.92; }
+
+    .floater {
+      position: absolute;
+      left: 50%;
+      top: 40%;
+      transform: translate(-50%, 0);
+      font-family: Inter, system-ui, sans-serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.16em;
+      color: #fff;
+      text-shadow: 0 0 12px var(--mood-2);
+      animation: float-up 0.9s ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes float-up {
+      to { transform: translate(-50%, -72px); opacity: 0; }
+    }
+
+    body.ascend #stage { animation: tremor 0.45s linear 2; }
+    body.surge .beat-ring { opacity: 1; border-color: #fff; }
+    body.surge .orb { filter: brightness(1.35) saturate(1.2); }
+    body.imminent .orb { animation: tremble 0.16s linear infinite; }
+    body.imminent #fill { box-shadow: 0 0 14px #fff, 0 0 22px var(--mood); }
+    body.imminent .beat-ring { opacity: 0.8; }
+
+    @keyframes tremor {
+      0%, 100% { transform: translate(0, 0); }
+      20% { transform: translate(-7px, 3px); }
+      40% { transform: translate(6px, -4px); }
+      60% { transform: translate(-4px, 5px); }
+      80% { transform: translate(5px, 2px); }
+    }
+
+    @keyframes tremble {
+      50% { transform: translate(1px, -1px); }
+    }
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -295,7 +392,7 @@
 
     #msg {
       left: 50%;
-      bottom: max(4.7rem, calc(env(safe-area-inset-bottom) + 4.15rem));
+      bottom: max(5.35rem, calc(env(safe-area-inset-bottom) + 4.8rem));
       transform: translateX(-50%);
       width: min(92vw, 40rem);
       min-height: 3.2em;
@@ -327,11 +424,26 @@
       50% { opacity: 0; }
     }
 
+    #relics {
+      bottom: max(2.45rem, calc(env(safe-area-inset-bottom) + 2.05rem));
+      left: 0;
+      right: 0;
+      font-size: 0.78rem;
+      letter-spacing: 0.42em;
+      opacity: 0.7;
+    }
+
+    #relics span { opacity: 0.22; }
+    #relics span.on {
+      opacity: 1;
+      text-shadow: 0 0 10px var(--mood-2);
+    }
+
     #meter {
       position: fixed;
       z-index: 4;
       left: 50%;
-      bottom: max(3.15rem, calc(env(safe-area-inset-bottom) + 2.6rem));
+      bottom: max(3.85rem, calc(env(safe-area-inset-bottom) + 3.3rem));
       transform: translateX(-50%);
       width: min(46vw, 220px);
       height: 2px;
@@ -362,9 +474,10 @@
     }
 
     @media (max-height: 640px) {
-      #msg { bottom: 4.3rem; font-size: 0.92rem; }
+      #msg { bottom: 4.8rem; font-size: 0.92rem; }
       #hint { top: calc(50% + 16vmin); }
       #stage { padding-bottom: 12vh; }
+      #relics { bottom: 2.15rem; }
     }
   </style>
 </head>
@@ -377,6 +490,9 @@
 
   <div id="stage">
     <div id="core" class="core" role="button" tabindex="0" aria-label="El Núcleo">
+      <div id="combo"></div>
+      <div id="orbit"></div>
+      <span class="beat-ring"></span>
       <div class="pulse">
         <span class="halo halo-a"></span>
         <span class="halo halo-b"></span>
@@ -392,6 +508,7 @@
 
   <p id="hint" class="ghost">Toca el Núcleo...</p>
   <p id="msg" class="ghost" aria-live="polite"></p>
+  <p id="relics" class="ghost" aria-hidden="true"></p>
   <div id="meter" aria-hidden="true"><span id="fill"></span></div>
   <p id="hud" class="ghost">Día 1 · Nivel 1</p>
 
@@ -419,6 +536,32 @@
       5: "Casi recuerdo tu verdadero nombre.",
       6: "Ya no soy solo un centro. Tú tampoco."
     };
+
+    var REWARD = {
+      2: "Fragmento: el primer ojo. Una órbita acaba de nacer.",
+      3: "Fragmento: la órbita. Ahora gira porque tú pulsas.",
+      4: "Fragmento: el anillo. El círculo ya te obedece.",
+      5: "Fragmento: la corona. Cada latido pesa más.",
+      6: "Fragmento: el nombre. El centro te guarda dentro."
+    };
+
+    var GLYPHS = ["◈", "✧", "☉", "⌬", "✶"];
+
+    var COMBO_LINES = {
+      5: "Cinco latidos. El núcleo empieza a inclinarse.",
+      8: "No pares. El anillo ya te sigue.",
+      12: "Doce ecos. Esto se vuelve difícil de dejar.",
+      16: "El ritmo ya es tuyo. Sosténlo.",
+      21: "Hay quien se queda aquí más de lo que admite."
+    };
+
+    var SESSION_LINES = [
+      "Otro pulso. Todavía estás aquí.",
+      "Si te vas ahora, el eco se enfría.",
+      "La barra no mide clics. Mide insistencia.",
+      "Quédate en el borde. Ahí es donde cede.",
+      "Un latido más y el círculo recuerda mejor."
+    ];
 
     var WHISPERS = [
       "No estás solo. Nunca lo estuviste.",
@@ -473,6 +616,18 @@
     var audioCtx = null;
     var returnNoticeShown = false;
     var whisperAlreadyToday = state.lastWhisperDate === todayKey();
+    var combo = 0;
+    var comboAt = 0;
+    var blessings = 0;
+    var moteCount = 0;
+    var presence = 0;
+    var lastGift = 0;
+    var pulseAnchor = 0;
+    var warnedImminent = false;
+    var lastFrame = 0;
+    var relics = document.getElementById("relics");
+    var comboEl = document.getElementById("combo");
+    var orbit = document.getElementById("orbit");
     var keyBuf = "";
     var invertTimer = 0;
     var idleTimer = 0;
@@ -511,7 +666,8 @@
         lastWhisperDate: "",
         firstVisit: today,
         lastVisit: today,
-        streak: 1
+        streak: 1,
+        bestCombo: 0
       };
       try {
         var raw = localStorage.getItem(STORAGE_KEY);
@@ -523,6 +679,7 @@
         fresh.firstVisit = data.firstVisit || today;
         fresh.lastVisit = data.lastVisit || "";
         fresh.streak = Math.max(1, Math.floor(Number(data.streak) || 1));
+        fresh.bestCombo = Math.max(0, Math.floor(Number(data.bestCombo) || 0));
       } catch (err) {
         return fresh;
       }
@@ -590,11 +747,41 @@
     }
 
     function applyLevel() {
+      var ratio = energyRatio(state.clicks);
       document.body.dataset.level = String(state.level);
       document.documentElement.style.setProperty("--scale", String(LEVEL_SCALE[state.level] || 1));
       hud.textContent = "Día " + state.streak + " · Nivel " + state.level;
-      fill.style.width = Math.round(energyRatio(state.clicks) * 100) + "%";
+      fill.style.width = Math.round(ratio * 100) + "%";
+      document.body.classList.toggle("imminent", state.level < 6 && ratio >= 0.82);
+      renderRelics();
+      syncOrbit();
       applyPulse();
+    }
+
+    function renderRelics() {
+      var html = "";
+      var i;
+      for (i = 0; i < GLYPHS.length; i++) {
+        var on = state.level > i + 1;
+        html += '<span class="' + (on ? "on" : "") + '">' + (on ? GLYPHS[i] : "·") + "</span>";
+      }
+      relics.innerHTML = html;
+    }
+
+    function syncOrbit() {
+      var count = Math.max(0, state.level - 1);
+      var speeds = [7.5, 11, 15, 9, 18];
+      orbit.innerHTML = "";
+      for (var i = 0; i < count; i++) {
+        var spin = document.createElement("div");
+        spin.className = "moon-spin";
+        spin.style.animationDuration = speeds[i] + "s";
+        if (i % 2) spin.style.animationDirection = "reverse";
+        spin.style.inset = (i * 6) + "%";
+        var dot = document.createElement("i");
+        spin.appendChild(dot);
+        orbit.appendChild(spin);
+      }
     }
 
     function applyPulse() {
@@ -602,6 +789,7 @@
       var levelRate = LEVEL_TIME[state.level] || 1;
       var sleepRate = document.body.classList.contains("asleep") ? 2.45 : 1;
       document.documentElement.style.setProperty("--dur", (base * levelRate * sleepRate).toFixed(2) + "s");
+      pulseAnchor = performance.now();
     }
 
     /* ========== Audio ========== */
@@ -652,7 +840,7 @@
     }
 
     function playClick() {
-      var freq = 420 + state.level * 70;
+      var freq = 420 + state.level * 40 + Math.min(combo, 14) * 26;
       tone(freq, 0.12, "sine", 0.05, 0.55);
       tone(freq * 1.5, 0.08, "triangle", 0.02, 0.7);
     }
@@ -793,7 +981,21 @@
       ctx.globalCompositeOperation = "source-over";
     }
 
-    function frame() {
+    function frame(now) {
+      if (!now) now = performance.now();
+      var dt = lastFrame ? Math.min(48, now - lastFrame) : 16;
+      lastFrame = now;
+      if (!document.hidden && !document.body.classList.contains("asleep")) {
+        presence += dt;
+        if (presence - lastGift >= 28000) {
+          lastGift = presence;
+          absorbMote();
+        }
+      }
+      if (combo && now - comboAt > comboWindow()) {
+        combo = 0;
+        renderCombo();
+      }
       drawParticles();
       requestAnimationFrame(frame);
     }
@@ -801,7 +1003,7 @@
     /* ========== Textos ========== */
     function say(text) {
       if (!text) return;
-      if (typeQueue.length > 3) typeQueue.shift();
+      if (typeQueue.length > 5) typeQueue.shift();
       typeQueue.push(text);
       if (!typing) nextLine();
     }
@@ -856,27 +1058,138 @@
       setTimeout(function () { core.classList.remove("flash"); }, 180);
     }
 
+    /* ========== Resonancia y recompensas ========== */
+    function pulseDurMs() {
+      var dur = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--dur")) * 1000;
+      return dur > 200 ? dur : 2800;
+    }
+
+    function pulsePhase() {
+      return ((performance.now() - pulseAnchor) % pulseDurMs()) / pulseDurMs();
+    }
+
+    function comboWindow() {
+      return Math.max(2800, pulseDurMs() * 1.2);
+    }
+
+    function renderCombo() {
+      if (!comboEl) return;
+      if (combo >= 2) {
+        comboEl.textContent = "eco ×" + combo;
+        comboEl.classList.add("on");
+      } else {
+        comboEl.textContent = "";
+        comboEl.classList.remove("on");
+      }
+    }
+
+    function floatText(text) {
+      var el = document.createElement("span");
+      el.className = "floater";
+      el.textContent = text;
+      waves.appendChild(el);
+      el.addEventListener("animationend", function () { el.remove(); });
+    }
+
+    function absorbMote() {
+      var c = center();
+      var i;
+      for (i = 0; i < 8; i++) {
+        var angle = (Math.PI * 2 * i) / 8;
+        var dist = 160 + (i % 3) * 24;
+        pushBurst(
+          c.x + Math.cos(angle) * dist,
+          c.y + Math.sin(angle) * dist,
+          -Math.cos(angle) * 2.4,
+          -Math.sin(angle) * 2.4,
+          1,
+          1.7
+        );
+      }
+      tone(640, 0.18, "sine", 0.03, 1.25);
+      moteCount += 1;
+      floatText("aliento");
+      if (moteCount >= 4) {
+        moteCount = 0;
+        blessings = 8;
+        document.body.classList.add("surge");
+        clearTimeout(surgeTimer);
+        surgeTimer = setTimeout(function () { document.body.classList.remove("surge"); }, 8000);
+        say("Te presto mi pulso. No lo sueltes.");
+        playChord();
+      }
+    }
+
+    function celebrate(level) {
+      document.body.classList.remove("ascend");
+      void document.body.offsetWidth;
+      document.body.classList.add("ascend");
+      spawnWave();
+      spawnWave();
+      explode();
+      playChord();
+      setTimeout(function () { document.body.classList.remove("ascend"); }, 1100);
+      say(REWARD[level]);
+      say(EVOLUTION[level]);
+    }
+
+    var surgeTimer = 0;
+
     function registerClick() {
       noteActivity();
       var today = todayKey();
       var hadWhisper = state.lastWhisperDate === today;
       var prevLevel = state.level;
-      state.clicks += 1;
+      var phase = pulsePhase();
+      var inBeat = phase > 0.38 && phase < 0.62;
+      var perfect = inBeat || blessings > 0;
+      var gain = 1;
+      if (!inBeat && blessings > 0) blessings -= 1;
+      if (perfect) {
+        combo += 1;
+        comboAt = performance.now();
+        if (combo >= 12) gain = 4;
+        else if (combo >= 7) gain = 3;
+        else if (combo >= 3) gain = 2;
+        floatText(gain > 1 ? "+" + gain : "latido");
+        if (combo > state.bestCombo) state.bestCombo = combo;
+        if (COMBO_LINES[combo]) {
+          document.body.classList.add("surge");
+          clearTimeout(surgeTimer);
+          surgeTimer = setTimeout(function () { document.body.classList.remove("surge"); }, 3500);
+          say(COMBO_LINES[combo]);
+          if (combo >= 8) explode();
+        }
+      } else if (combo >= 3) {
+        floatText("se apaga");
+        combo = 0;
+      } else {
+        combo = 0;
+      }
+      renderCombo();
+      state.clicks += gain;
       state.level = levelFromClicks(state.clicks);
       var evolved = state.level > prevLevel;
+      if (evolved) warnedImminent = false;
       saveState();
       applyLevel();
       spawnWave();
       flash();
+      if (perfect) shootOne();
       shootOne();
       playClick();
       if (hint.classList.contains("show")) {
         hint.classList.remove("show");
         hint.classList.add("hide");
       }
+      if (state.level < 6 && energyRatio(state.clicks) >= 0.82 && !warnedImminent && !evolved) {
+        warnedImminent = true;
+        say("Está por abrirse. No te detengas.");
+      }
       if (evolved) {
-        playChord();
-        say(EVOLUTION[state.level]);
+        celebrate(state.level);
+      } else if (hadWhisper && state.clicks > 0 && state.clicks % 50 === 0) {
+        say(SESSION_LINES[Math.floor(state.clicks / 50) % SESSION_LINES.length]);
       }
       if (!hadWhisper) {
         var line = pickWhisper();
